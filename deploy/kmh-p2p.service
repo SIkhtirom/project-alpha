@@ -1,0 +1,16 @@
+# Alternatif tanpa Docker: systemd. Salin ke /etc/systemd/system/kmh-p2p.service
+[Unit]
+Description=KMH P2P Syariah
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=kmh
+WorkingDirectory=/opt/kmh-p2p
+EnvironmentFile=/opt/kmh-p2p/.env
+ExecStart=/usr/bin/node server/index.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

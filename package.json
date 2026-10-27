@@ -1,0 +1,45 @@
+{
+  "name": "kmh-p2p",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-kms": "^3.1156.0",
+    "@simplewebauthn/server": "^14.0.3",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.22.3",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "knex": "^3.3.0",
+    "multer": "^2.5.0",
+    "otplib": "^13.5.0",
+    "pg": "^8.23.1",
+    "qrcode": "^1.5.4"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^13.0.3"
+  },
+  "devDependencies": {
+    "acorn": "^8.19.0",
+    "esbuild": "^0.28.2"
+  },
+  "description": "Platform P2P Lending Syariah (Musyarakah) tertutup untuk anggota KMH",
+  "scripts": {
+    "start": "node server/index.js",
+    "seed:demo": "node server/index.js --seed-demo",
+    "seed:los": "node server/index.js --seed-los",
+    "test": "node --test --test-force-exit tests/flow.test.mjs tests/security.test.mjs tests/los-security.test.mjs tests/frontend.test.mjs tests/lint-frontend.test.mjs tests/routing.test.mjs tests/deploy.test.mjs",
+    "test:flow": "node --test tests/flow.test.mjs",
+    "test:security": "node --test tests/security.test.mjs",
+    "test:los": "node --test tests/los-security.test.mjs",
+    "test:frontend": "node --test tests/frontend.test.mjs",
+    "test:lint": "node --test tests/lint-frontend.test.mjs",
+    "test:deploy": "node --test tests/deploy.test.mjs",
+    "build:demo": "node scripts/build-artifact.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

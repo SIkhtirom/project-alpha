@@ -1,0 +1,37 @@
+node_modules/
+.env
+*.pem
+*.key
+dist/
+
+# Basis data dan berkas runtime lokal (PostgreSQL data dir, WAL, unggahan KYC, log)
+data/
+*.sqlite
+*.sqlite3
+*.log
+logs/
+
+# Kredensial dan berkas rahasia lain
+*.p12
+*.pfx
+*.crt
+*.keystore
+*.jks
+*.env
+.env.*
+!.env.example
+secrets/
+*.secret
+
+# OS dan editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Log paket dan cache
+npm-debug.log*
+yarn-error.log*
+coverage/
+.cache/

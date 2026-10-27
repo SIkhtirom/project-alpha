@@ -1,0 +1,75 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kmh
+      POSTGRES_USER: kmh
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kmh -d kmh"]
+      interval: 10s
+      retries: 5
+
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://kmh:${POSTGRES_PASSWORD}@db:5432/kmh
+      TRUST_PROXY_HOPS: "1"
+      WAF_MODE: ${WAF_MODE:-block}
+      ENVELOPE_MASTER_KEY: ${ENVELOPE_MASTER_KEY}
+      AWS_KMS_KEY_ID: ${AWS_KMS_KEY_ID:-}
+      AWS_REGION: ${AWS_REGION:-ap-southeast-1}
+      WEBAUTHN_RP_ID: ${WEBAUTHN_RP_ID:-p2p.kmh.coop}
+      WEBAUTHN_ORIGIN: ${WEBAUTHN_ORIGIN:-https://p2p.kmh.coop}
+      VA_WEBHOOK_IP_ALLOWLIST: ${VA_WEBHOOK_IP_ALLOWLIST:-}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-}
+      REQUIRE_STEP_UP: ${REQUIRE_STEP_UP:-true}
+      REQUIRE_STEP_UP_STRICT: ${REQUIRE_STEP_UP_STRICT:-false}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      SMTP_TO: ${SMTP_TO:-}
+      WHATSAPP_WEBHOOK_URL: ${WHATSAPP_WEBHOOK_URL:-}
+      WHATSAPP_TOKEN: ${WHATSAPP_TOKEN:-}
+      SECURITY_ALERT_EMAIL_MIN_SEVERITY: ${SECURITY_ALERT_EMAIL_MIN_SEVERITY:-high}
+      SECURITY_ALERT_WHATSAPP_MIN_SEVERITY: ${SECURITY_ALERT_WHATSAPP_MIN_SEVERITY:-critical}
+      OTP_MAX_ATTEMPTS: ${OTP_MAX_ATTEMPTS:-3}
+      OTP_CHALLENGE_TTL_MS: ${OTP_CHALLENGE_TTL_MS:-300000}
+      FACE_HOLD_MS: ${FACE_HOLD_MS:-2600}
+      FACE_MIN_TOTAL_MS: ${FACE_MIN_TOTAL_MS:-5000}
+      FACE_MAX_TOTAL_MS: ${FACE_MAX_TOTAL_MS:-25000}
+      LOS_CSV_PATH: ${LOS_CSV_PATH:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads:/app/data/uploads
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddydata:/data
+    depends_on:
+      - app
+
+volumes:
+  dbdata:
+  uploads:
+  caddydata:
